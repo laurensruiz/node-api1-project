@@ -7,6 +7,20 @@ const server = express()
 
 server.use(express.json()) // we need to teach express how to parse
 
+//delete
+server.delete('/api/users/:id', async (req, res) => {
+    const tempUser = await User.findById(req.params.id)
+    //console.log('possible', tempUser)
+    if(!tempUser){
+        res.status(404).json({
+            message: "The user with the specified ID does not exist"
+        })
+    } else {
+        const deletedUser = await User.remove(tempUser.id)
+        //console.log(deletedUser)
+        res.status(200).json(deletedUser)
+    }
+})
 //post
 server.post('/api/users', (req, res) => {
      //http post :9000/api/users name=foo bio=bar --verbose
