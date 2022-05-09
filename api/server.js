@@ -11,6 +11,11 @@ server.get('/api/users', (req, res) => {
     .then(users =>{
         //throw new Error('whhops!')
         //console.log(users) shows on run server
+        if(!users){
+            res.status(500).json({
+                message: "The users information could not be retrieved"
+            }) 
+         }
         res.json(users) //shows httpie
     })
     .catch(err => {
@@ -24,6 +29,11 @@ server.get('/api/users', (req, res) => {
 server.get('/api/users/:id', (req, res) => {
     User.findById(req.params.id)
     .then(user =>{
+        if(!user){
+           res.status(404).json({
+               message: "The user with the specified ID does not exist"
+           }) 
+        }
         res.json(user)
     })
     .catch(err => {
