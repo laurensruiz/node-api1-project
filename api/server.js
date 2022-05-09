@@ -6,9 +6,35 @@ const User = require('./users/model') //look at all the functions created
 const server = express()
 
 server.use(express.json()) // we need to teach express how to parse
+//put
+server.put('/api/users/:id', async (req, res) => {
+    try{
+        const tempUser = await User.findById(req.params.id)
+        if(!tempUser){
+            res.status(404).json({
+                message: "The user with the specified ID does not exist"
+            })
+        } else {
+            if(!req.body.name || !req.body.bio) {
+                res.status(400).json({
+                    message: "Please provide name and bio for the user"
+            })
+            } else {
+                const updatedUser = await User.update(req.params.id, req.body)
+                res.status(200).json(updatedUser)
+            }
+        } 
+    } catch (err) {
+        res.status(500).json({
+            message: "error deleting user",
+            err: err.message,
+        })
+    }
+})
 
 //delete
 server.delete('/api/users/:id', async (req, res) => {
+   try {
     const tempUser = await User.findById(req.params.id)
     //console.log('possible', tempUser)
     if(!tempUser){
@@ -20,6 +46,12 @@ server.delete('/api/users/:id', async (req, res) => {
         //console.log(deletedUser)
         res.status(200).json(deletedUser)
     }
+   } catch (err) {
+    res.status(500).json({
+        message: "error deleting user",
+        err: err.message,
+    })
+   }
 })
 //post
 server.post('/api/users', (req, res) => {
